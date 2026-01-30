@@ -4,6 +4,9 @@ from datetime import datetime
 import pandas as pd
 from model import predict_match, load_data
 
+# Detect if user wants mobile layout (optional via query param)
+mobile_view = st.query_params.get("mobile_view", ["false"])[0] == "true"
+
 # ---------------- PAGE CONFIG ---------------- #
 st.set_page_config(page_title="Premier League Predictions", layout="wide")
 st.title("⚽ XO MODEL PREMIER LEAGUE PREDICTOR ⚽")
@@ -92,21 +95,42 @@ st.subheader(f"Gameweek {current_gw}")
 
 # ---------------- DISPLAY MATCHES ---------------- #
 for i, game in enumerate(matchdays[current_gw]):
-    cols = st.columns([2,1,2,2])
-    with cols[0]:
-        st.image(game["HomeLogo"], width=40)
-        st.write(f"**{game['HomeTeam']}**")
-    with cols[1]:
-        st.write("VS")
-    with cols[2]:
-        st.image(game["AwayLogo"], width=40)
-        st.write(f"**{game['AwayTeam']}**")
-    with cols[3]:
-        st.write(f"🕒 {game['MatchTime']}")
-
     home = TEAM_NAME_MAP.get(game["HomeTeam"], game["HomeTeam"])
     away = TEAM_NAME_MAP.get(game["AwayTeam"], game["AwayTeam"])
     match_date = datetime.strptime(game["MatchTime"], "%Y-%m-%d %H:%M")
+
+    if mobile_view:
+        # Mobile: logos side by side
+        cols = st.columns([1,1])
+        with cols[0]:
+            st.image(game["HomeLogo"], width=40)
+            st.write(home)
+        with cols[1]:
+            st.image(game["AwayLogo"], width=40)
+            st.write(away)
+
+        # Prediction below logos
+        if st.button("See Prediction", key=f"pred-{current_gw}-{i}"):
+            hg, ag = predict_match(home, away, match_date)
+            winner = "Draw ⚖️"
+            if hg > ag: winner = f"{home} 🏆"
+            elif ag > hg: winner = f"{away} 🏆"
+            st.success(f"**{home} {hg} - {ag} {away} → {winner}**")
+
+    else:
+        cols = st.columns([2,1,2,2])
+        with cols[0]:
+            st.image(game["HomeLogo"], width=40)
+            st.write(f"**{game['HomeTeam']}**")
+        with cols[1]:
+            st.write("VS")
+        with cols[2]:
+            st.image(game["AwayLogo"], width=40)
+            st.write(f"**{game['AwayTeam']}**")
+        with cols[3]:
+            st.write(f"🕒 {game['MatchTime']}")
+
+    
 
     if st.button("See Prediction", key=f"pred-{current_gw}-{i}"):
 
