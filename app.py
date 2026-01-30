@@ -4,13 +4,30 @@ from datetime import datetime
 import pandas as pd
 from model import predict_match, load_data
 
-# Detect if user wants mobile layout (optional via query param)
-mobile_view = st.query_params.get("mobile_view", ["false"])[0] == "true"
-logo_width = 30 if mobile_view else 50
+
+
+
 # ---------------- PAGE CONFIG ---------------- #
 st.set_page_config(page_title="Premier League Predictions", layout="wide")
 st.title("⚽ XO MODEL PREMIER LEAGUE PREDICTOR ⚽")
 
+
+
+# ---------------- MOBILE DETECTION ---------------- #
+if "viewport_width" not in st.session_state:
+    st.session_state.viewport_width = 1024  # default desktop width
+
+st.markdown(
+    """
+    <script>
+    const width = window.innerWidth;
+    window.parent.postMessage({funcName: 'setViewportWidth', width: width}, '*')
+    </script>
+    """,
+    unsafe_allow_html=True
+)
+
+mobile_view = st.session_state.viewport_width < 768
 # ---------------- TEAM NAME MAP ---------------- #
 TEAM_NAME_MAP = {
     "Arsenal FC": "Arsenal",
