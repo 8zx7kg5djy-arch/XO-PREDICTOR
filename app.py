@@ -100,22 +100,33 @@ for i, game in enumerate(matchdays[current_gw]):
     match_date = datetime.strptime(game["MatchTime"], "%Y-%m-%d %H:%M")
 
     if mobile_view:
-        # Mobile: logos side by side
+    # Mobile: logos side by side
         cols = st.columns([1,1])
         with cols[0]:
             st.image(game["HomeLogo"], width=30)
-            st.write(home)
         with cols[1]:
             st.image(game["AwayLogo"], width=30)
-            st.write(away)
 
         # Prediction below logos
         if st.button("See Prediction", key=f"pred-{current_gw}-{i}"):
             hg, ag = predict_match(home, away, match_date)
-            winner = "Draw ⚖️"
-            if hg > ag: winner = f"{home} 🏆"
-            elif ag > hg: winner = f"{away} 🏆"
-            st.success(f"**{home} {hg} - {ag} {away} → {winner}**")
+
+            # Determine winner crowns
+            winner_home_crown = "🏆" if hg > ag else ""
+            winner_away_crown = "🏆" if ag > hg else ""
+
+            # Show prediction in 3-column layout: home logo | score | away logo
+            cols_pred = st.columns([1,1,1])
+            with cols_pred[0]:
+                st.image(game["HomeLogo"], width=30)
+                if winner_home_crown:
+                    st.markdown(f"<div style='text-align:center'>{winner_home_crown}</div>", unsafe_allow_html=True)
+            with cols_pred[1]:
+                st.markdown(f"**{hg} - {ag}**", unsafe_allow_html=True)
+            with cols_pred[2]:
+                st.image(game["AwayLogo"], width=30)
+                if winner_away_crown:
+                    st.markdown(f"<div style='text-align:center'>{winner_away_crown}</div>", unsafe_allow_html=True)
 
     else:
         cols = st.columns([2,1,2,2])
