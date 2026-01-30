@@ -6,7 +6,7 @@ from model import predict_match, load_data
 
 # Detect if user wants mobile layout (optional via query param)
 mobile_view = st.query_params.get("mobile_view", ["false"])[0] == "true"
-
+logo_width = 30 if mobile_view else 50
 # ---------------- PAGE CONFIG ---------------- #
 st.set_page_config(page_title="Premier League Predictions", layout="wide")
 st.title("⚽ XO MODEL PREMIER LEAGUE PREDICTOR ⚽")
@@ -103,10 +103,10 @@ for i, game in enumerate(matchdays[current_gw]):
         # Mobile: logos side by side
         cols = st.columns([1,1])
         with cols[0]:
-            st.image(game["HomeLogo"], width=40)
+            st.image(game["HomeLogo"], width=30)
             st.write(home)
         with cols[1]:
-            st.image(game["AwayLogo"], width=40)
+            st.image(game["AwayLogo"], width=30)
             st.write(away)
 
         # Prediction below logos
@@ -132,38 +132,38 @@ for i, game in enumerate(matchdays[current_gw]):
 
     
 
-    if st.button("See Prediction", key=f"pred-{current_gw}-{i}"):
+        if st.button("See Prediction", key=f"pred-{current_gw}-{i}"):
 
-        if home not in known_teams or away not in known_teams:
-            st.error(f"Team not found in historical data: {home} / {away}")
-        else:
-            try:
-                hg, ag = predict_match(home, away, match_date)
+            if home not in known_teams or away not in known_teams:
+                st.error(f"Team not found in historical data: {home} / {away}")
+            else:
+                try:
+                    hg, ag = predict_match(home, away, match_date)
 
-                # Determine winner
-                winner_home = winner_away = ""
-                if hg > ag:
-                    winner_home = "🏆"
-                elif ag > hg:
-                    winner_away = "🏆"
+                    # Determine winner
+                    winner_home = winner_away = ""
+                    if hg > ag:
+                        winner_home = "🏆"
+                    elif ag > hg:
+                        winner_away = "🏆"
 
-                # Display fancy match card
-                st.markdown(
-                    f"""
-                    <div style="display:flex; align-items:center; justify-content:center; font-size:24px; padding:10px; border:2px solid #1f77b4; border-radius:10px; margin-bottom:10px;">
-                        <div style="text-align:center; margin-right:50px;">
-                            <img src="{game['HomeLogo']}" width="45"><br>
-                            <b>{home}</b><br>{winner_home}
+                    # Display fancy match card
+                    st.markdown(
+                        f"""
+                        <div style="display:flex; align-items:center; justify-content:center; font-size:24px; padding:10px; border:2px solid #1f77b4; border-radius:10px; margin-bottom:10px;">
+                            <div style="text-align:center; margin-right:50px;">
+                                <img src="{game['HomeLogo']}" width="45"><br>
+                                <b>{home}</b><br>{winner_home}
+                            </div>
+                            <div style="font-size:32px; font-weight:bold; margin:0 20px;">
+                                {hg} - {ag}
+                            </div>
+                            <div style="text-align:center; margin-left:50px;">
+                                <img src="{game['AwayLogo']}" width="45"><br>
+                                <b>{away}</b><br>{winner_away}
+                            </div>
                         </div>
-                        <div style="font-size:32px; font-weight:bold; margin:0 20px;">
-                            {hg} - {ag}
-                        </div>
-                        <div style="text-align:center; margin-left:50px;">
-                            <img src="{game['AwayLogo']}" width="45"><br>
-                            <b>{away}</b><br>{winner_away}
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True
-                )
-            except Exception as e:
-                st.error(f"Prediction error: {e}")
+                        """, unsafe_allow_html=True
+                    )
+                except Exception as e:
+                    st.error(f"Prediction error: {e}")
