@@ -94,12 +94,12 @@ st.subheader(f"Gameweek {current_gw}")
 for i, game in enumerate(matchdays[current_gw]):
     cols = st.columns([2,1,2,2])
     with cols[0]:
-        st.image(game["HomeLogo"], width=50)
+        st.image(game["HomeLogo"], width=40)
         st.write(f"**{game['HomeTeam']}**")
     with cols[1]:
         st.write("VS")
     with cols[2]:
-        st.image(game["AwayLogo"], width=50)
+        st.image(game["AwayLogo"], width=40)
         st.write(f"**{game['AwayTeam']}**")
     with cols[3]:
         st.write(f"🕒 {game['MatchTime']}")
@@ -128,14 +128,14 @@ for i, game in enumerate(matchdays[current_gw]):
                     f"""
                     <div style="display:flex; align-items:center; justify-content:center; font-size:24px; padding:10px; border:2px solid #1f77b4; border-radius:10px; margin-bottom:10px;">
                         <div style="text-align:center; margin-right:50px;">
-                            <img src="{game['HomeLogo']}" width="60"><br>
+                            <img src="{game['HomeLogo']}" width="45"><br>
                             <b>{home}</b><br>{winner_home}
                         </div>
                         <div style="font-size:32px; font-weight:bold; margin:0 20px;">
                             {hg} - {ag}
                         </div>
                         <div style="text-align:center; margin-left:50px;">
-                            <img src="{game['AwayLogo']}" width="60"><br>
+                            <img src="{game['AwayLogo']}" width="45"><br>
                             <b>{away}</b><br>{winner_away}
                         </div>
                     </div>
