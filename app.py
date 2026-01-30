@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import pandas as pd
 from model import predict_match, load_data
 
@@ -71,19 +71,21 @@ except Exception as e:
     matches = []
 
 # ---------------- GROUP BY GAMEWEEK ---------------- #
+now = datetime.now(timezone.utc)
 matchdays = {}
-now = datetime.utcnow()
-
 for m in matches:
-    match_time = datetime.strptime(m["utcDate"], "%Y-%m-%dT%H:%M:%SZ")
-    if match_time.date() >= now.date():
+    # parse the API date and set as UTC
+    match_time = datetime.fromisoformat(m["utcDate"].replace("Z", "")).replace(tzinfo=timezone.utc)
+
+    if match_time >= now:  # compare in UTC
         gw = m.get("matchday", 0)
         matchdays.setdefault(gw, []).append({
             "HomeTeam": m["homeTeam"]["name"],
             "AwayTeam": m["awayTeam"]["name"],
             "HomeLogo": m["homeTeam"]["crest"],
             "AwayLogo": m["awayTeam"]["crest"],
-            "MatchTime": match_time.strftime("%Y-%m-%d %H:%M")
+            # display in UAE local time
+            "MatchTime": (match_time + timedelta(hours=4)).strftime("%Y-%m-%d %H:%M")
         })
 
 if not matchdays:
