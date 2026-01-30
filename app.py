@@ -181,14 +181,14 @@ for i, game in enumerate(matchdays[current_gw]):
                         <div style="display:flex; align-items:center; justify-content:center; font-size:24px; padding:10px; border:2px solid #1f77b4; border-radius:10px; margin-bottom:10px;">
                             <div style="text-align:center; margin-right:50px;">
                                 <img src="{game['HomeLogo']}" width="45"><br>
-                                <b>{home}</b><br>{winner_home}
+                                {winner_home}  <!-- keep crown if home wins -->
                             </div>
                             <div style="font-size:32px; font-weight:bold; margin:0 20px;">
                                 {hg} - {ag}
                             </div>
                             <div style="text-align:center; margin-left:50px;">
                                 <img src="{game['AwayLogo']}" width="45"><br>
-                                <b>{away}</b><br>{winner_away}
+                                {winner_away}  <!-- keep crown if away wins -->
                             </div>
                         </div>
                         """, unsafe_allow_html=True
